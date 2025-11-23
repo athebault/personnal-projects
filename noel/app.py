@@ -15,7 +15,7 @@ st.markdown("""
     
     /* Augmenter la taille du texte général */
     .stMarkdown, p, div, span, label {
-        font-size: 22px !important;
+        font-size: 20px !important;
     }
     
     /* Augmenter la taille du titre */
