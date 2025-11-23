@@ -37,7 +37,8 @@ st.markdown("""
 st.title("🎄 Liste de Noël 2025")
 st.subheader("Cher Papa Noël, on a tous été super sages cette année !! Promis ;o)")
 # Chemin vers le fichier CSV
-CSV_PATH = "data/noel_2025.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH = os.path.join(BASE_DIR, "data", "noel_2025.csv")
 
 # Charger les données depuis le CSV
 if 'data' not in st.session_state:
