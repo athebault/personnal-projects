@@ -53,36 +53,32 @@ if 'data' not in st.session_state:
         st.stop()
 
 # Mise en page
-col1, col2, col3 = st.columns([1, 0.5, 3])
-with col1: 
-    # Filtre par personne
-    personnes = ['Tous'] + sorted(st.session_state.data['pour'].dropna().unique().tolist())
-    personne_selectionnee = st.selectbox("🎁 Filtrer par personne :", personnes)
+# Filtre par personne
+personnes = ['Tous'] + sorted(st.session_state.data['pour'].dropna().unique().tolist())
+personne_selectionnee = st.selectbox("🎁 Filtrer par personne :", personnes)
 
-    # Filtrer les données
-    if personne_selectionnee == 'Tous':
-        data_filtree = st.session_state.data.copy()
-    else:
-        data_filtree = st.session_state.data[st.session_state.data['pour'] == personne_selectionnee].copy()
+# Filtrer les données
+if personne_selectionnee == 'Tous':
+    data_filtree = st.session_state.data.copy()
+else:
+    data_filtree = st.session_state.data[st.session_state.data['pour'] == personne_selectionnee].copy()
 
-with col3: 
-    # Afficher le tableau éditable
-    edited_df = st.data_editor(
-        data_filtree,
-        column_config={
-            "cadeau": st.column_config.TextColumn("🎁 Cadeau", width="large"),
-            "pour": st.column_config.TextColumn("👤 Pour", width="small"),
-            "lien": st.column_config.LinkColumn("🔗 Lien", width="large"),
-            "img": st.column_config.ImageColumn("📷 Image", width="small"),
-            "choisi": st.column_config.CheckboxColumn("✅ Choisi", width="small"),
-            "plusieurs": st.column_config.CheckboxColumn("👥 On peut se mettre à plusieurs !", width="small"),
-
-        },
-        column_order=["choisi","plusieurs", "cadeau", "pour", "lien", "img"],
-        hide_index=True,
-        use_container_width=True,
-        disabled=["cadeau", "pour", "lien", "img"]  # Seule la case à cocher est éditable
-    )
+# Afficher le tableau éditable
+edited_df = st.data_editor(
+    data_filtree,
+    column_config={
+        "cadeau": st.column_config.TextColumn("🎁 Cadeau", width="large"),
+        "pour": st.column_config.TextColumn("👤 Pour", width="small"),
+        "lien": st.column_config.LinkColumn("🔗 Lien", width="large"),
+        "img": st.column_config.ImageColumn("📷 Image", width="small"),
+        "choisi": st.column_config.CheckboxColumn("✅ Choisi", width="small"),
+        "plusieurs": st.column_config.CheckboxColumn("👥 On peut se mettre à plusieurs !", width="small"),
+    },
+    column_order=["choisi","plusieurs", "cadeau", "pour", "lien", "img"],
+    hide_index=True,
+    use_container_width=True,
+    disabled=["cadeau", "pour", "lien", "img"]  # Seule la case à cocher est éditable
+)
 
 # Mettre à jour les données dans la session
 # On met à jour uniquement les lignes qui sont dans le filtre
