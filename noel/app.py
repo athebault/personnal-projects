@@ -72,7 +72,7 @@ edited_df = st.data_editor(
         "lien": st.column_config.LinkColumn("🔗 Lien", width="large"),
         "img": st.column_config.ImageColumn("📷 Image", width="small"),
         "choisi": st.column_config.CheckboxColumn("✅ Choisi", width="small"),
-        "plusieurs": st.column_config.CheckboxColumn("👥 On peut se mettre à plusieurs !", width="small"),
+        "plusieurs": st.column_config.CheckboxColumn("👥 On peut se mettre à plusieurs !", width="medium"),
     },
     column_order=["choisi","plusieurs", "cadeau", "pour", "lien", "img"],
     hide_index=True,
