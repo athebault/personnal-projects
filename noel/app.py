@@ -84,7 +84,7 @@ edited_df = st.data_editor(
     column_order=["choisi", "plusieurs", "cadeau", "pour", "lien", "img"],
     hide_index=True,
     use_container_width=True,
-    disabled=["cadeau", "pour", "lien", "img", "plusieurs"],  # Seule la case "choisi" est éditable
+    disabled=["cadeau", "pour", "lien", "img", "plusieurs"],  # Seule les cases "choisi" et "plusieurs" sont éditables
     key="data_editor"  # Clé importante pour la persistence
 )
 
@@ -93,10 +93,12 @@ if not edited_df.equals(data_filtree):
     # Mettre à jour les données dans la session pour les lignes modifiées
     for idx in edited_df.index:
         st.session_state.data.loc[idx, 'choisi'] = edited_df.loc[idx, 'choisi']
+        st.session_state.data.loc[idx, 'plusieurs'] = edited_df.loc[idx, 'plusieurs']
     
     # Sauvegarder dans le CSV
     save_data(st.session_state.data)
-    st.rerun()  # Forcer le rechargement pour afficher les changements
+
+st.rerun()  # Forcer le rechargement pour afficher les changements
 
 # Afficher un résumé
 col1, col2 = st.columns(2)
