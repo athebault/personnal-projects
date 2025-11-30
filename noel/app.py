@@ -37,22 +37,29 @@ st.markdown("""
 
 st.title("🎄 Liste de Noël 2025")
 st.subheader("Cher Papa Noël, on a tous été super sages cette année !! Promis ;o)")
+
 # Chemin vers le fichier CSV
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE_DIR, "data", "noel_2025.csv")
 
-# Charger les données depuis le CSV
-if 'data' not in st.session_state:
+# Fonction pour charger les données
+def load_data():
     try:
-        # Lire le CSV avec séparateur point-virgule et encodage UTF-8 avec BOM
-        st.session_state.data = pd.read_csv(CSV_PATH, sep=';', encoding='utf-8-sig')
-        # Convertir la colonne choisi en booléen
-        st.session_state.data['choisi'] = st.session_state.data['choisi'].astype(bool)
+        df = pd.read_csv(CSV_PATH, sep=';', encoding='utf-8-sig')
+        df['choisi'] = df['choisi'].astype(bool)
+        return df
     except Exception as e:
         st.error(f"Erreur lors du chargement du CSV : {e}")
         st.stop()
 
-# Mise en page
+# Fonction pour sauvegarder les données
+def save_data(df):
+    df.to_csv(CSV_PATH, sep=';', index=False, encoding='utf-8-sig')
+
+# Charger les données UNIQUEMENT si elles ne sont pas déjà en session
+if 'data' not in st.session_state:
+    st.session_state.data = load_data()
+
 # Filtre par personne
 personnes = ['Tous'] + sorted(st.session_state.data['pour'].dropna().unique().tolist())
 personne_selectionnee = st.selectbox("🎁 Filtrer par personne :", personnes)
@@ -74,22 +81,26 @@ edited_df = st.data_editor(
         "choisi": st.column_config.CheckboxColumn("✅ Choisi", width="small"),
         "plusieurs": st.column_config.CheckboxColumn("👥 On peut se mettre à plusieurs !", width="medium"),
     },
-    column_order=["choisi","plusieurs", "cadeau", "pour", "lien", "img"],
+    column_order=["choisi", "plusieurs", "cadeau", "pour", "lien", "img"],
     hide_index=True,
     use_container_width=True,
-    disabled=["cadeau", "pour", "lien", "img"]  # Seule la case à cocher est éditable
+    disabled=["cadeau", "pour", "lien", "img", "plusieurs"],  # Seule la case "choisi" est éditable
+    key="data_editor"  # Clé importante pour la persistence
 )
 
-# Mettre à jour les données dans la session
-# On met à jour uniquement les lignes qui sont dans le filtre
-for idx in edited_df.index:
-    st.session_state.data.loc[idx, 'choisi'] = edited_df.loc[idx, 'choisi']
-
-# Sauvegarder automatiquement dans le CSV
-st.session_state.data.to_csv(CSV_PATH, sep=';', index=False, encoding='utf-8-sig')
+# Détecter les changements et mettre à jour
+if not edited_df.equals(data_filtree):
+    # Mettre à jour les données dans la session pour les lignes modifiées
+    for idx in edited_df.index:
+        st.session_state.data.loc[idx, 'choisi'] = edited_df.loc[idx, 'choisi']
+    
+    # Sauvegarder dans le CSV
+    save_data(st.session_state.data)
+    st.rerun()  # Forcer le rechargement pour afficher les changements
 
 # Afficher un résumé
 col1, col2 = st.columns(2)
+
 with col1:
     nb_choisis_filtre = edited_df['choisi'].sum()
     st.metric("Items sélectionnés (filtrés)", f"{int(nb_choisis_filtre)} / {len(edited_df)}")
@@ -97,3 +108,8 @@ with col1:
 with col2:
     nb_choisis_total = st.session_state.data['choisi'].sum()
     st.metric("Total sélectionnés", f"{int(nb_choisis_total)} / {len(st.session_state.data)}")
+
+# Bouton pour recharger depuis le fichier (utile si quelqu'un d'autre modifie)
+if st.button("🔄 Recharger depuis le fichier"):
+    st.session_state.data = load_data()
+    st.rerun()
