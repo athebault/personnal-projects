@@ -83,7 +83,7 @@ edited_df = st.data_editor(
     },
     column_order=["choisi", "plusieurs", "cadeau", "pour", "lien", "img"],
     hide_index=True,
-    use_container_width=True,
+    width='stretch',
     disabled=["cadeau", "pour", "lien", "img", "plusieurs"],  # Seule les cases "choisi" et "plusieurs" sont éditables
     key="data_editor"  # Clé importante pour la persistence
 )
