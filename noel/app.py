@@ -97,8 +97,7 @@ if not edited_df.equals(data_filtree):
     
     # Sauvegarder dans le CSV
     save_data(st.session_state.data)
-
-st.rerun()  # Forcer le rechargement pour afficher les changements
+    st.rerun()  # Forcer le rechargement pour afficher les changements
 
 # Afficher un résumé
 col1, col2 = st.columns(2)
